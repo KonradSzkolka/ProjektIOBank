@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Składki gildii</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { border-collapse: collapse; width: 100%; font-size: 12px; }
+        th, td { border: 1px solid #ccc; padding: 4px 6px; text-align: right; }
+        th { background-color: #f0f0f0; position: sticky; top: 0; }
+        td.name { text-align: left; position: sticky; left: 0; background: #fff; }
+        td.missing { background-color: #ffdddd; }
+        td.zero { color: #bbb; }
+        td.total { font-weight: bold; background-color: #f5f5f5; }
+        .controls { margin-bottom: 10px; }
+        input[type="text"] { width: 450px; }
+    </style>
+</head>
+<body>
+<h1>Składki gildii – tygodniowo</h1>
+
+<div class="controls">
+    <label>API key:
+        <input type="text" id="apiKey" placeholder="Wklej swój API key">
+    </label>
+    <label>Minimalna wpłata / tydzień (gold):
+        <input type="number" id="thresholdGold" value="5">
+    </label>
+    <button id="loadBtn">Załaduj</button>
+</div>
+
+<div id="status"></div>
+<div id="tableContainer"></div>
+
+<script>
+    function formatCoins(coins) {
+        const negative = coins < 0;
+        const abs = Math.abs(coins);
+        const gold = Math.floor(abs / 10000);
+        const silver = Math.floor((abs % 10000) / 100);
+        const copper = abs % 100;
+        let str = `${gold}g ${silver}s ${copper}c`;
+        return negative ? "-" + str : str;
+    }
+
+    document.getElementById('loadBtn').addEventListener('click', async () => {
+        const apiKey = document.getElementById('apiKey').value.trim();
+        const thresholdGold = parseInt(document.getElementById('thresholdGold').value || "0", 10);
+        const thresholdCoins = thresholdGold * 10000;
+
+        if (!apiKey) {
+            alert("Wklej API key");
+            return;
+        }
+
+        const status = document.getElementById('status');
+        const container = document.getElementById('tableContainer');
+        status.textContent = "Ładowanie danych...";
+        container.innerHTML = "";
+
+        try {
+            const resp = await fetch(`/weekly-contributions?apiKey=${encodeURIComponent(apiKey)}`);
+            if (!resp.ok) {
+                status.textContent = "Błąd ładowania: " + resp.status;
+                return;
+            }
+            const data = await resp.json();
+
+            if (!data.length) {
+                status.textContent = "Brak danych.";
+                return;
+            }
+
+            // zbierz listę wszystkich tygodni w kolejności z pierwszego wiersza
+            const weeks = Object.keys(data[0].weeklyAmounts);
+
+            const table = document.createElement('table');
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+
+            // pierwszy nagłówek = nick
+            let th = document.createElement('th');
+            th.textContent = "Gracz";
+            headerRow.appendChild(th);
+
+            // tygodnie
+            weeks.forEach(w => {
+                th = document.createElement('th');
+                th.textContent = w;
+                headerRow.appendChild(th);
+            });
+
+            // total
+            th = document.createElement('th');
+            th.textContent = "Suma";
+            headerRow.appendChild(th);
+
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            const tbody = document.createElement('tbody');
+
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+
+                const tdName = document.createElement('td');
+                tdName.textContent = row.accountName;
+                tdName.className = "name";
+                tr.appendChild(tdName);
+
+                weeks.forEach(w => {
+                    const val = row.weeklyAmounts[w] || 0;
+                    const td = document.createElement('td');
+
+                    if (val === 0) {
+                        td.textContent = "-";
+                        td.classList.add("zero");
+                    } else {
+                        td.textContent = formatCoins(val);
+                    }
+
+                    if (val < thresholdCoins) {
+                        td.classList.add("missing");
+                    }
+
+                    tr.appendChild(td);
+                });
+
+                const tdTotal = document.createElement('td');
+                tdTotal.textContent = formatCoins(row.total);
+                tdTotal.className = "total";
+                tr.appendChild(tdTotal);
+
+                tbody.appendChild(tr);
+            });
+
+            table.appendChild(tbody);
+            container.appendChild(table);
+            status.textContent = "Gotowe.";
+
+        } catch (e) {
+            console.error(e);
+            status.textContent = "Wyjątek podczas ładowania danych.";
+        }
+    });
+</script>
+</body>
+</html>
