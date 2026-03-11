@@ -1,15 +1,17 @@
 package vod;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vod.dto.WeeklyContributionRow;
-import vod.dto.ContributionEntry;   // ← DODAJ TEN IMPORT
+import vod.dto.ContributionEntry;
 import vod.service.GuildContributionService;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/webapi")
 public class GuildContributionRest {
 
     private final GuildContributionService service;
@@ -19,17 +21,30 @@ public class GuildContributionRest {
         this.service = service;
     }
 
-    // już istniejący endpoint tygodniowy
     @GetMapping("/weekly-contributions")
     public List<WeeklyContributionRow> contributions(
             @RequestParam("apiKey") String apiKey) {
         return service.getWeeklyContributions(guildId, apiKey);
     }
 
-    // NOWY endpoint z surowymi wpisami
     @GetMapping("/contributions-raw")
     public List<ContributionEntry> raw(
             @RequestParam("apiKey") String apiKey) {
         return service.getRawContributions(guildId, apiKey);
+    }
+    @GetMapping("/weekly-contributions-filtered")
+    public List<WeeklyContributionRow> contributionsFiltered(
+            @RequestParam("apiKey") String apiKey,
+            @RequestParam(name = "minGold", required = false) Integer minGold
+    ) {
+        List<WeeklyContributionRow> all = service.getWeeklyContributions(guildId, apiKey);
+
+        if (minGold == null) {
+            return all;
+        }
+
+        return all.stream()
+                .filter(row -> row.getTotal() >= minGold)
+                .toList();
     }
 }

@@ -1,6 +1,7 @@
 package vod;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vod.model.GuildBalance;
 import vod.service.GuildBalanceService;
@@ -8,6 +9,7 @@ import vod.service.GuildBalanceService;
 import java.util.List;
 
 @RestController
+@RequestMapping("/webapi")
 public class GuildBalanceRest {
 
     private final GuildBalanceService balanceService;

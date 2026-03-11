@@ -6,4 +6,8 @@ public class WeeklyContributionRow {
     public String accountName;
     public Map<String, Long> weeklyAmounts; // "YYYY-Www" -> coins
     public long total;
+
+    public long getTotal() {
+        return total;
+    }
 }

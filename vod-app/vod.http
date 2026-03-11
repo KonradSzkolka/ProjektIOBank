@@ -1,0 +1,27 @@
+### Ping kontrolera
+GET http://localhost:8080/webapi/test
+Accept: text/plain
+
+###
+
+### Test statusu - 200
+GET http://localhost:8080/webapi/test-status?value=ok
+Accept: text/plain
+
+###
+
+### Test statusu - 404
+GET http://localhost:8080/webapi/test-status?value=fail
+Accept: text/plain
+
+###
+
+### Weekly contributions bez filtra
+GET http://localhost:8080/webapi/weekly-contributions?apiKey=CDE25C6A-B2C2-C44D-B9AB-1CE85D8E79E8AF439A12-1048-4D7B-A0BA-BB33EC933C09
+Accept: application/json
+
+###
+
+### Weekly contributions z filtrem minGold
+GET http://localhost:8080/webapi/weekly-contributions-filtered?apiKey=CDE25C6A-B2C2-C44D-B9AB-1CE85D8E79E8AF439A12-1048-4D7B-A0BA-BB33EC933C09&minGold=10
+Accept: application/json
