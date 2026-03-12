@@ -25,3 +25,84 @@ Accept: application/json
 ### Weekly contributions z filtrem minGold
 GET http://localhost:8080/webapi/weekly-contributions-filtered?apiKey=CDE25C6A-B2C2-C44D-B9AB-1CE85D8E79E8AF439A12-1048-4D7B-A0BA-BB33EC933C09&minGold=10
 Accept: application/json
+
+### Dodanie notatki - poprawne
+POST http://localhost:8080/webapi/notes
+Content-Type: application/json
+Accept: application/json
+
+{
+  "title": "OK tytul",
+  "content": "Jakas tresc"
+}
+
+###
+
+### Dodanie notatki - za krótki tytul (powinno byc 400)
+POST http://localhost:8080/webapi/notes
+Content-Type: application/json
+Accept: application/json
+
+{
+  "title": "A",
+  "content": "Za krotki tytul"
+}
+
+###
+
+### Dodanie notatki - brak tytulu (powinno byc 400)
+POST http://localhost:8080/webapi/notes
+Content-Type: application/json
+Accept: application/json
+
+{
+  "content": "Brak tytulu"
+}
+
+### Notatka - za krotki tytul (PL)
+POST http://localhost:8080/webapi/notes
+Content-Type: application/json
+Accept: application/json
+Accept-Language: pl
+
+{
+  "title": "A",
+  "content": "Za krotki tytul"
+}
+
+###
+
+### Notatka - za krotki tytul (IT)
+POST http://localhost:8080/webapi/notes
+Content-Type: application/json
+Accept: application/json
+Accept-Language: it
+
+{
+  "title": "A",
+  "content": "Titolo troppo corto"
+}
+
+### Dodanie notatki - poprawne (PL)
+POST http://localhost:8080/webapi/notes
+Content-Type: application/json
+Accept: application/json
+Accept-Language: pl
+
+{
+  "title": "Test",
+  "content": "Pierwsza notatka"
+}
+
+###
+
+### Dodanie notatki z duplikatem tytułu (PL) - powinno być 400 z komunikatem o duplikacie
+POST http://localhost:8080/webapi/notes
+Content-Type: application/json
+Accept: application/json
+Accept-Language: pl
+
+{
+  "title": "Test",
+  "content": "Druga notatka z tym samym tytulem"
+}
