@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  mysql-vod:
+    image: mysql:8.0
+    container_name: mysql-vod
+    environment:
+      - MYSQL_DATABASE=vod
+      - MYSQL_ROOT_PASSWORD=mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - mysql_vod_data:/var/lib/mysql
+
+volumes:
+  mysql_vod_data:

@@ -2,31 +2,21 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${title}">Guild Bank</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-        th { background-color: #f0f0f0; }
-    </style>
+    <title th:text="${title}">Guild bank</title>
 </head>
 <body>
+<h2 th:text="${title}">Guild bank</h2>
 
-<h2 th:text="${title}">Stan banku gildii</h2>
-
-<table>
-    <thead>
+<table border="1">
     <tr>
-        <th>Członek</th>
-        <th>Złoto</th>
+        <th>Guild</th>
+        <th>Balance</th>
     </tr>
-    </thead>
-    <tbody>
     <tr th:each="b : ${balances}">
-        <td th:text="${b.memberName}">Nazwa</td>
-        <td th:text="${b.gold}">0</td>
+        <td th:text="${b.member.accountName}">Account</td>
+        <td th:text="${b.member.role}">Role</td>
+        <td th:text="${b.totalCoins}">0</td>
     </tr>
-    </tbody>
 </table>
 
 </body>
