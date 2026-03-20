@@ -32,8 +32,8 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "title": "OK tytul",
-  "content": "Jakas tresc"
+  "title": "OK tytuł",
+  "content": "Jakaś treść"
 }
 
 ###
@@ -45,7 +45,7 @@ Accept: application/json
 
 {
   "title": "A",
-  "content": "Za krotki tytul"
+  "content": "Za krotki tytuł"
 }
 
 ###
@@ -56,7 +56,7 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "content": "Brak tytulu"
+  "content": "Brak tytułu"
 }
 
 ### Notatka - za krotki tytul (PL)
@@ -67,7 +67,7 @@ Accept-Language: pl
 
 {
   "title": "A",
-  "content": "Za krotki tytul"
+  "content": "Za krotki tytuł"
 }
 
 ###
@@ -104,5 +104,38 @@ Accept-Language: pl
 
 {
   "title": "Test",
-  "content": "Druga notatka z tym samym tytulem"
+  "content": "Druga notatka z tym samym tytułem"
+}
+
+
+### IllegalArgument test - powinno trafić do @ExceptionHandler
+GET http://localhost:8080/webapi/guild-notes?phrase=foo
+Accept: text/plain
+
+###
+
+### Dodanie guild note - brak autora (400 z komunikatem walidatora DTO)
+POST http://localhost:8080/webapi/guild-notes
+Content-Type: application/json
+Accept: application/json
+Accept-Language: pl
+
+{
+  "title": "Info o raidzie",
+  "content": "Zbiórka 20:00",
+  "author": ""
+}
+
+###
+
+### Dodanie guild note - poprawne (201)
+POST http://localhost:8080/webapi/guild-notes
+Content-Type: application/json
+Accept: application/json
+Accept-Language: pl
+
+{
+  "title": "Info o raidzie",
+  "content": "Zbiórka 20:00",
+  "author": "Korcyk"
 }
