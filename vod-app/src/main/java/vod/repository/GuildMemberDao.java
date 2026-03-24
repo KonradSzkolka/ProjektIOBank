@@ -1,4 +1,4 @@
-package vod.repositroy;
+package vod.repository;
 
 import vod.model.GuildMember;
 

@@ -32,22 +32,18 @@ public class GuildBankOnTheFlyService {
             List<GuildTransaction> transactions = entries.stream()
                     .filter(e -> "stash".equals(e.get("type")))
                     .map(e -> {
-                        Long id = ((Number) e.get("id")).longValue();
                         String user = (String) e.get("user");
                         String operation = (String) e.get("operation");
                         long coins = e.get("coins") == null ? 0L
                                 : ((Number) e.get("coins")).longValue();
-                        String time = (String) e.get("time");
+                        String time = (String) e.get("time"); // na razie nie używamy
 
                         GuildMember member = new GuildMember(user, "");
                         TransactionType type = "deposit".equals(operation)
                                 ? TransactionType.DEPOSIT
                                 : TransactionType.WITHDRAW;
 
-                        return new GuildTransaction(
-                                id, member, null, 0, coins,
-                                OffsetDateTime.parse(time).toLocalDateTime(), type
-                        );
+                        return new GuildTransaction(member, type, coins);
                     })
                     .toList();
 

@@ -2,7 +2,7 @@ package vod.service.impl;
 
 import org.springframework.stereotype.Service;
 import vod.model.GuildBalance;
-import vod.repositroy.GuildBalanceDao;
+import vod.repository.GuildBalanceDao;
 import vod.service.GuildBalanceService;
 
 import java.util.List;

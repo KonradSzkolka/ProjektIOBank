@@ -1,15 +1,16 @@
-package vod.repositroy.mem;
+package vod.repository.mem;
 
-import org.springframework.stereotype.Repository;
-import vod.repositroy.GuildMemberDao;
 import vod.model.GuildMember;
+import vod.repository.GuildMemberDao;
+
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+// usuń albo zakomentuj adnotację
+// @Repository
 public class MemGuildMemberDao implements GuildMemberDao {
 
-    private final List<GuildMember> members = SampleData.sampleMembers();
+    private final List<GuildMember> members = List.of(); // może być nawet tak
 
     @Override
     public List<GuildMember> findAll() {

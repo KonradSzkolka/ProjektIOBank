@@ -1,8 +1,9 @@
-package vod.repositroy.mem;
+package vod.repository.mem;
 
 import org.springframework.stereotype.Repository;
-import vod.model.*;
-import vod.repositroy.GuildBalanceDao;
+import vod.model.GuildBalance;
+import vod.model.GuildMember;
+import vod.repository.GuildBalanceDao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,17 +15,12 @@ public class MemGuildBalanceDao implements GuildBalanceDao {
     private final List<GuildBalance> balances = new ArrayList<>();
 
     public MemGuildBalanceDao() {
-        List<GuildMember> members = SampleData.sampleMembers();
-        List<GuildTransaction> transactions = SampleData.sampleTransactions(members);
+        // proste dane demo, bez SampleData:
+        GuildMember m1 = new GuildMember("Korcyk.1234", "Leader");
+        GuildMember m2 = new GuildMember("GuildMate.5678", "Member");
 
-        for (GuildMember member : members) {
-            long netCoins = transactions.stream()
-                    .filter(t -> t.member.accountName.equals(member.accountName))
-                    .mapToLong(t -> t.type == TransactionType.DEPOSIT ? t.coins : -t.coins)
-                    .sum();
-
-            balances.add(new GuildBalance(member, netCoins, null));
-        }
+        balances.add(new GuildBalance(m1, 1000L, null));
+        balances.add(new GuildBalance(m2, 500L, null));
     }
 
     @Override

@@ -66,26 +66,25 @@ public class GuildContributionServiceImpl implements GuildContributionService {
             List<Map<String, Object>> entries =
                     mapper.readValue(json, new TypeReference<>() {});
 
-            // 1. Zamiana logów na Twoje GuildTransaction
-            List<GuildTransaction> transactions = entries.stream()
+            // 1. Zamiana logów na ContributionEntry (jak wyżej)
+            List<ContributionEntry> contributions = entries.stream()
                     .filter(e -> "stash".equals(e.get("type")))
                     .map(e -> {
-                        Long id = ((Number) e.get("id")).longValue();
                         String user = (String) e.get("user");
                         String operation = (String) e.get("operation");
                         long coins = e.get("coins") == null ? 0L
                                 : ((Number) e.get("coins")).longValue();
                         String time = (String) e.get("time");
 
-                        GuildMember member = new GuildMember(user, "");
-                        TransactionType type = "deposit".equals(operation)
-                                ? TransactionType.DEPOSIT
-                                : TransactionType.WITHDRAW;
+                        if (!"deposit".equals(operation)) {
+                            coins = -coins;
+                        }
 
-                        return new GuildTransaction(
-                                id, member, null, 0, coins,
-                                OffsetDateTime.parse(time).toLocalDateTime(), type
-                        );
+                        ContributionEntry ce = new ContributionEntry();
+                        ce.accountName = user;
+                        ce.coins = coins;
+                        ce.time = OffsetDateTime.parse(time).toLocalDateTime();
+                        return ce;
                     })
                     .toList();
 
@@ -93,22 +92,21 @@ public class GuildContributionServiceImpl implements GuildContributionService {
             WeekFields wf = WeekFields.ISO;
             Map<String, Map<String, Long>> perUserPerWeek = new HashMap<>();
 
-            for (GuildTransaction t : transactions) {
-                long delta = t.type == TransactionType.DEPOSIT ? t.coins : -t.coins;
+            for (ContributionEntry c : contributions) {
+                long delta = c.coins;
 
-                //var date = t.time;
-                var date = t.time.toLocalDate(); // jeśli t.time to LocalDateTime
+                var date = c.time.toLocalDate();
                 var firstDayOfWeek = date.with(wf.dayOfWeek(), 1); // poniedziałek
                 var lastDayOfWeek  = date.with(wf.dayOfWeek(), 7); // niedziela
 
-                String weekKey = firstDayOfWeek.toString() + " - " + lastDayOfWeek.toString();
+                String weekKey = firstDayOfWeek + " - " + lastDayOfWeek;
 
                 perUserPerWeek
-                        .computeIfAbsent(t.member.accountName, k -> new HashMap<>())
+                        .computeIfAbsent(c.accountName, k -> new HashMap<>())
                         .merge(weekKey, delta, Long::sum);
             }
 
-            // 3. Zbieramy wszystkie tygodnie, żeby kolumny były spójne
+            // 3. Zbieramy tygodnie
             Set<String> allWeeks = perUserPerWeek.values().stream()
                     .flatMap(m -> m.keySet().stream())
                     .collect(Collectors.toCollection(TreeSet::new));
@@ -138,4 +136,5 @@ public class GuildContributionServiceImpl implements GuildContributionService {
             throw new RuntimeException("Failed to load GW2 data", e);
         }
     }
+
 }

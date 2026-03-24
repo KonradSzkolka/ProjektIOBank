@@ -2,7 +2,7 @@ package vod.service.impl;
 
 import org.springframework.stereotype.Service;
 import vod.model.GuildMember;
-import vod.repositroy.GuildMemberDao;
+import vod.repository.GuildMemberDao;
 import vod.service.GuildMemberService;
 
 import java.util.List;

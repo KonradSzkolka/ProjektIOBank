@@ -1,10 +1,10 @@
-package vod.repositroy.mem;
+package vod.repository.mem;
 
 import org.springframework.stereotype.Repository;
-import vod.model.GuildMember;
 import vod.model.GuildTransaction;
-import vod.repositroy.GuildTransactionDao;
+import vod.repository.GuildTransactionDao;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,8 +14,8 @@ public class MemGuildTransactionDao implements GuildTransactionDao {
     private final List<GuildTransaction> transactions;
 
     public MemGuildTransactionDao() {
-        List<GuildMember> members = SampleData.sampleMembers();
-        this.transactions = SampleData.sampleTransactions(members);
+        // bez SampleData – po prostu pusta lista
+        this.transactions = Collections.emptyList();
     }
 
     @Override
@@ -30,4 +30,3 @@ public class MemGuildTransactionDao implements GuildTransactionDao {
                 .collect(Collectors.toList());
     }
 }
-
